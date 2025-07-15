@@ -68,7 +68,6 @@ cd ignite-personal-brand-os
 Firebase Configuration:
 This application uses Firebase for authentication and data storage. You will need to set up a Firebase project and configure it.
 
-Go to the Firebase Console: https://console.firebase.google.com/
 
 Create a new project.
 
