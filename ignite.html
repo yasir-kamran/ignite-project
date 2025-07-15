@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ignite - Your AI-powered Personal Brand OS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Body always in dark mode */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Permanent dark background */
+            color: #e2e8f0; /* Light text color */
+            transition: none; /* No transition needed for theme change as it's fixed */
+        }
+
+        /* Ensure other elements adapt to dark mode by default */
+        .bg-white {
+            background-color: #2d3748; /* Darker background for elements that were white */
+        }
+        .text-gray-800 {
+            color: #e2e8f0; /* Light text for elements that were dark gray */
+        }
+        .text-gray-900 {
+            color: #ffffff; /* White text for headings */
+        }
+        .text-gray-600 {
+            color: #a0aec0; /* Lighter gray for secondary text */
+        }
+        .text-gray-700 {
+            color: #cbd5e0; /* Slightly lighter than default for labels, etc. */
+        }
+        .text-gray-500 {
+            color: #a0aec0; /* Consistent light gray for hints/small text */
+        }
+        .border-gray-200 {
+            border-color: #4a5568; /* Darker border */
+        }
+        .border-gray-300 {
+            border-color: #4a5568; /* Darker border */
+        }
+        .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25); /* Darker shadow */
+        }
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2); /* Darker shadow */
+        }
+        .shadow-xl {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3); /* Darker shadow */
+        }
+        .shadow-2xl {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Darker shadow */
+        }
+
+        .page-section {
+            display: none; /* Hide all pages by default */
+        }
+        .page-section.active {
+            display: block; /* Show active page */
+        }
+
+        /* Styles for the header Knowledge Quiz glow button */
+        .header-quiz-glow-button {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .header-quiz-glow-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, #8b5cf6 0%, #a78bfa 50%, #8b5cf6 100%);
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .header-quiz-glow-button:hover::before {
+            opacity: 1;
+        }
+        .header-quiz-glow-button::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: #6d28d9; /* Inner button color */
+            border-radius: 0.5rem; /* Match button border-radius */
+            z-index: -1;
+        }
+
+        /* Simple glow effect for the home CTA button */
+        .home-cta-button-style {
+            transition: all 0.3s ease-in-out;
+        }
+        .home-cta-button-style:hover {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.7); /* Purple glow */
+            transform: translateY(-2px); /* Slight lift */
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        /* Custom styles for FAQ accordion */
+        .accordion-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            background-color: #2d3748; /* Dark mode default */
+        }
+        .accordion-header:hover {
+            background-color: #4b5563; /* Dark mode hover for accordion header */
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 200px; /* Adjust as needed for content height */
+            transition: max-height 0.5s ease-in;
+        }
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Auth Modal specific styles */
+        .auth-modal-tab {
+            cursor: pointer;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .auth-modal-tab.active {
+            background-color: #7c3aed; /* Active tab in dark mode */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .auth-modal-tab:not(.active):hover {
+            background-color: #374151; /* Dark mode hover for inactive tab */
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="text-gray-100"> <!-- Body now defaults to dark text -->
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false;
+
+        // Message Box functionality variables (initialized later in window.onload)
+        let messageBox;
+        let messageBoxTitle;
+        let messageBoxContent;
+        let messageBoxClose;
+
+        function showMessageBox(title, content) {
+            if (messageBox && messageBoxTitle && messageBoxContent) {
+                messageBoxTitle.textContent = title;
+                messageBoxContent.textContent = content;
+                messageBox.classList.remove('hidden');
+            } else {
+                console.error("Message box elements not initialized.");
+            }
+        }
+
+        // Authentication Modal elements (initialized later in window.onload)
+        let authModal;
+        let authModalClose;
+        let authButton; // The "Log In" / "Log Out" button in header
+
+        let signUpTab;
+        let signInTab;
+
+        let signUpForm;
+        let signUpEmailInput;
+        let signUpPasswordInput;
+        let signUpBtn;
+        let signUpSpinner;
+
+        let signInForm;
+        let signInEmailInput;
+        let signInPasswordInput;
+        let signInBtn;
+        let signInSpinner;
+
+        // Page Navigation
+        let navLinks;
+        let pageSections;
+
+        function navigateTo(pageId) {
+            pageSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            // Update active state in navigation bar
+            navLinks.forEach(link => {
+                if (link.dataset.page === pageId) {
+                    link.classList.add('text-purple-400'); // Always purple for dark mode
+                    link.classList.remove('text-gray-300');
+                } else {
+                    link.classList.remove('text-purple-400');
+                    link.classList.add('text-gray-300');
+                }
+            });
+
+            // If navigating to the knowledge quiz, render it and fetch leaderboard
+            if (pageId === 'knowledge-quiz') {
+                renderQuiz();
+                fetchLeaderboard();
+            }
+
+            // Update URL hash
+            history.pushState(null, '', `#${pageId}`);
+        }
+
+        function openAuthModal(tab = 'signIn') {
+            if (authModal) {
+                authModal.classList.remove('hidden');
+                if (tab === 'signUp') {
+                    showSignUpTab();
+                } else {
+                    showSignInTab();
+                }
+            } else {
+                console.error("Auth modal not initialized.");
+            }
+        }
+
+        function closeAuthModal() {
+            if (authModal) {
+                authModal.classList.add('hidden');
+                // Clear input fields when closing
+                if (signUpEmailInput) signUpEmailInput.value = '';
+                if (signUpPasswordInput) signUpPasswordInput.value = '';
+                if (signInEmailInput) signInEmailInput.value = '';
+                if (signInPasswordInput) signInPasswordInput.value = '';
+            } else {
+                console.error("Auth modal not initialized.");
+            }
+        }
+
+        function showSignUpTab() {
+            if (signUpTab && signInTab && signUpForm && signInForm) {
+                signUpTab.classList.add('active');
+                signInTab.classList.remove('active');
+                signUpForm.classList.remove('hidden');
+                signInForm.classList.add('hidden');
+            } else {
+                console.error("Sign up tab elements not initialized.");
+            }
+        }
+
+        function showSignInTab() {
+            if (signInTab && signUpTab && signInForm && signUpForm) {
+                signInTab.classList.add('active');
+                signUpTab.classList.remove('active');
+                signInForm.classList.remove('hidden');
+                signUpForm.classList.add('hidden');
+            } else {
+                console.error("Sign in tab elements not initialized.");
+            }
+        }
+
+        // Update Auth Button in Header
+        function updateAuthUI() {
+            if (authButton) {
+                if (auth && auth.currentUser) {
+                    authButton.textContent = 'Log Out';
+                    authButton.onclick = handleSignOut;
+                } else {
+                    authButton.textContent = 'Log In';
+                    authButton.onclick = () => openAuthModal('signIn'); // Default to sign in
+                }
+            } else {
+                console.error("Auth button not initialized.");
+            }
+        }
+
+        // Handle Sign Out
+        async function handleSignOut() {
+            try {
+                await signOut(auth);
+                showMessageBox('Logged Out', 'You have been successfully logged out.');
+            } catch (error) {
+                console.error("Sign out error:", error);
+                showMessageBox('Logout Failed', 'An error occurred during logout. Please try again.');
+            }
+        }
+
+        // Brand Building Knowledge Quiz Functionality
+        const quizQuestions = [
+            {
+                question: "What is the primary goal of personal branding?",
+                options: [
+                    "To make as much money as possible.",
+                    "To control the narrative about yourself and build trust.",
+                    "To get famous quickly.",
+                    "To impress everyone you meet."
+                ],
+                answer: "To control the narrative about yourself and build trust."
+            },
+            {
+                question: "Which of these is NOT a core component of an authentic personal brand?",
+                options: [
+                    "Your unique skills and expertise.",
+                    "Your personal values and beliefs.",
+                    "Copying a successful influencer's exact style.",
+                    "Your compelling stories and experiences."
+                ],
+                answer: "Copying a successful influencer's exact style."
+            },
+            {
+                question: "Why is consistency important in personal branding?",
+                options: [
+                    "It's not, posting randomly is more exciting.",
+                    "It helps your audience remember you and builds credibility over time.",
+                    "It ensures you never run out of things to say.",
+                    "It's only important for large corporations, not individuals."
+                ],
+                answer: "It helps your audience remember you and builds credibility over time."
+            },
+            {
+                question: "What does 'thought leadership' primarily involve?",
+                options: [
+                    "Being the loudest voice in a room.",
+                    "Consistently sharing valuable insights and expertise to influence your industry.",
+                    "Only posting about your personal achievements.",
+                    "Becoming a celebrity overnight."
+                ],
+                answer: "Consistently sharing valuable insights and expertise to influence your industry."
+            },
+            {
+                question: "Which platform is generally best for professional networking and long-form content?",
+                options: [
+                    "TikTok",
+                    "Instagram",
+                    "LinkedIn",
+                    "Snapchat"
+                ],
+                answer: "LinkedIn"
+            }
+        ];
+
+        let quizContainer;
+        let submitQuizBtn;
+        let quizLoadingSpinner;
+        let quizResults;
+        let userScoreSpan;
+        let totalQuestionsSpan;
+        let userPercentageSpan;
+        let leaderboardSection;
+        let leaderboardBody;
+        let leaderboardMessage;
+
+        function renderQuiz() {
+            if (!quizContainer) return; // Ensure quizContainer is initialized
+            quizContainer.innerHTML = ''; // Clear previous questions
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'mb-6';
+                questionDiv.innerHTML = `
+                    <p class="text-lg font-semibold text-gray-200 mb-3">${index + 1}. ${q.question}</p>
+                    <div class="space-y-2">
+                        ${q.options.map(option => `
+                            <label class="flex items-center p-3 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition duration-200">
+                                <input type="radio" name="question${index}" value="${option}" class="form-radio h-5 w-5 text-purple-600">
+                                <span class="ml-3 text-gray-300">${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+            if (quizResults) quizResults.classList.add('hidden'); // Hide results on quiz render
+            if (leaderboardSection) leaderboardSection.classList.add('hidden'); // Hide leaderboard on quiz render
+            if (submitQuizBtn) {
+                submitQuizBtn.disabled = false;
+                submitQuizBtn.classList.remove('hidden'); // Ensure submit button is visible
+            }
+        }
+
+        async function submitQuiz() {
+            let score = 0;
+            const totalQuestions = quizQuestions.length;
+            let allAnswered = true;
+
+            quizQuestions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selectedOption) {
+                    if (selectedOption.value === q.answer) {
+                        score++;
+                    }
+                } else {
+                    allAnswered = false;
+                }
+            });
+
+            if (!allAnswered) {
+                showMessageBox('Incomplete Challenge', 'Please answer all questions before submitting.');
+                return;
+            }
+
+            // Show loading spinner
+            if (submitQuizBtn) submitQuizBtn.disabled = true;
+            if (quizLoadingSpinner) quizLoadingSpinner.classList.remove('hidden');
+
+            const percentage = (score / totalQuestions) * 100;
+
+            if (userScoreSpan) userScoreSpan.textContent = score;
+            if (totalQuestionsSpan) totalQuestionsSpan.textContent = totalQuestions;
+            if (userPercentageSpan) userPercentageSpan.textContent = percentage.toFixed(2);
+            if (quizResults) quizResults.classList.remove('hidden');
+
+            try {
+                // Ensure Firebase is ready before proceeding
+                while (!window.isAuthReady()) {
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                }
+
+                const currentUserId = window.getUserId();
+                if (!currentUserId) {
+                    showMessageBox('Authentication Error', 'Could not get user ID. Please try again to save your score.');
+                    return;
+                }
+
+                // Save quiz result to Firestore
+                const quizScoresCollectionRef = window.collection(window.db, `artifacts/${window.appId}/public/data/quizScores`);
+                await window.addDoc(quizScoresCollectionRef, {
+                    userId: currentUserId,
+                    score: score,
+                    percentage: parseFloat(percentage.toFixed(2)),
+                    timestamp: window.serverTimestamp()
+                });
+                console.log("Quiz result saved to Firestore successfully!");
+                showMessageBox('Challenge Completed!', 'Your score has been recorded and viral titles unlocked!');
+
+                // After submitting, fetch and display the updated leaderboard
+                fetchLeaderboard();
+
+            } catch (error) {
+                console.error("Error saving quiz result or fetching leaderboard:", error);
+                showMessageBox('Error', 'Failed to save your challenge result or load the leaderboard. Please try again.');
+            } finally {
+                if (submitQuizBtn) submitQuizBtn.disabled = false;
+                if (quizLoadingSpinner) quizLoadingSpinner.classList.add('hidden');
+            }
+        }
+
+        async function fetchLeaderboard() {
+            if (!leaderboardBody || !leaderboardSection || !leaderboardMessage) return; // Ensure elements are initialized
+
+            leaderboardBody.innerHTML = ''; // Clear previous leaderboard
+            leaderboardSection.classList.remove('hidden');
+            leaderboardMessage.classList.add('hidden'); // Hide message initially
+
+            try {
+                // Ensure Firebase is ready before proceeding
+                while (!window.isAuthReady()) {
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                }
+
+                const quizScoresCollectionRef = window.collection(window.db, `artifacts/${window.appId}/public/data/quizScores`);
+                const q = window.query(quizScoresCollectionRef, window.orderBy('score', 'desc'), window.limit(10)); // Top 10 scores
+                const querySnapshot = await window.getDocs(q);
+
+                if (querySnapshot.empty) {
+                    leaderboardMessage.textContent = 'No scores recorded yet. Be the first to take the challenge!';
+                    leaderboardMessage.classList.remove('hidden');
+                    return;
+                }
+
+                let rank = 1;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const row = leaderboardBody.insertRow();
+                    row.insertCell(0).textContent = rank++;
+                    row.insertCell(1).textContent = data.userId;
+                    row.insertCell(2).textContent = data.score;
+                    row.insertCell(3).textContent = `${data.percentage}%`;
+                });
+
+            } catch (error) {
+                console.error("Error fetching leaderboard:", error);
+                leaderboardMessage.textContent = 'Failed to load leaderboard. Please try again.';
+                leaderboardMessage.classList.remove('hidden');
+            }
+        }
+
+        // Initialize Firebase
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Listen for authentication state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("User authenticated:", userId);
+                } else {
+                    // Sign in anonymously if no token or token sign-in fails
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                            userId = auth.currentUser.uid;
+                            console.log("Signed in with custom token:", userId);
+                        } else {
+                            await signInAnonymously(auth);
+                            userId = auth.currentUser.uid; // Get the anonymous user ID
+                            console.log("Signed in anonymously:", userId);
+                        }
+                    } catch (error) {
+                        console.error("Firebase authentication error:", error);
+                        // Fallback to a random ID if authentication completely fails
+                        userId = crypto.randomUUID();
+                        console.log("Using random user ID as fallback:", userId);
+                    }
+                }
+                isAuthReady = true;
+                // Update UI based on auth state
+                updateAuthUI();
+                // Display user ID on the UI if needed for multi-user apps
+                const userIdDisplay = document.getElementById('userIdDisplay');
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `User ID: ${userId}`;
+                }
+            });
+
+        } catch (error) {
+            console.error("Failed to initialize Firebase:", error);
+            // If Firebase initialization fails, still allow the app to run without persistence
+            isAuthReady = true;
+            userId = crypto.randomUUID(); // Fallback to random ID
+            console.log("Firebase initialization failed, using random user ID:", userId);
+            updateAuthUI(); // Still attempt to update UI
+        }
+
+        // Expose to global scope for other scripts if needed (e.g., for direct function calls)
+        window.db = db;
+        window.auth = auth;
+        window.getUserId = () => userId;
+        window.isAuthReady = () => isAuthReady;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        window.serverTimestamp = serverTimestamp;
+        window.appId = appId;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+        window.query = query; // Expose query for leaderboard
+        window.orderBy = orderBy; // Expose orderBy for leaderboard
+        window.limit = limit; // Expose limit for leaderboard
+        window.getDocs = getDocs; // Expose getDocs for leaderboard
+        window.navigateTo = navigateTo; // Expose navigateTo globally
+        window.closeAuthModal = closeAuthModal; // Expose closeAuthModal globally
+        window.openAuthModal = openAuthModal; // Expose openAuthModal globally
+        window.showSignUpTab = showSignUpTab; // Expose showSignUpTab globally
+        window.showSignInTab = showSignInTab; // Expose showSignInTab globally
+        window.updateAuthUI = updateAuthUI; // Expose updateAuthUI globally
+        window.handleSignOut = handleSignOut; // Expose handleSignOut globally
+
+
+        window.addEventListener('load', () => {
+            // Initialize Message Box elements
+            messageBox = document.getElementById('messageBox');
+            messageBoxTitle = document.getElementById('messageBoxTitle');
+            messageBoxContent = document.getElementById('messageBoxContent');
+            messageBoxClose = document.getElementById('messageBoxClose');
+            if (messageBoxClose) {
+                messageBoxClose.addEventListener('click', () => {
+                    messageBox.classList.add('hidden');
+                });
+            }
+
+            // Initialize Authentication Modal elements
+            authModal = document.getElementById('authModal');
+            authModalClose = document.getElementById('authModalClose');
+            authButton = document.getElementById('authButton');
+
+            signUpTab = document.getElementById('signUpTab');
+            signInTab = document.getElementById('signInTab');
+
+            signUpForm = document.getElementById('signUpForm');
+            signUpEmailInput = document.getElementById('signUpEmail');
+            signUpPasswordInput = document.getElementById('signUpPassword');
+            signUpBtn = document.getElementById('signUpBtn');
+            signUpSpinner = document.getElementById('signUpSpinner');
+
+            signInForm = document.getElementById('signInForm');
+            signInEmailInput = document.getElementById('signInEmail');
+            signInPasswordInput = document.getElementById('signInPassword');
+            signInBtn = document.getElementById('signInBtn');
+            signInSpinner = document.getElementById('signInSpinner');
+
+            // Initialize Navigation elements
+            navLinks = document.querySelectorAll('.nav-link');
+            pageSections = document.querySelectorAll('.page-section');
+
+            // Initialize Quiz elements
+            quizContainer = document.getElementById('quizContainer');
+            submitQuizBtn = document.getElementById('submitQuizBtn');
+            quizLoadingSpinner = document.getElementById('quizLoadingSpinner');
+            quizResults = document.getElementById('quizResults');
+            userScoreSpan = document.getElementById('userScore');
+            totalQuestionsSpan = document.getElementById('totalQuestions');
+            userPercentageSpan = document.getElementById('userPercentage');
+            leaderboardSection = document.getElementById('leaderboardSection');
+            leaderboardBody = document.getElementById('leaderboardBody');
+            leaderboardMessage = document.getElementById('leaderboardMessage');
+
+            // Initialize Home page elements
+            const passionInput = document.getElementById('passionInput');
+            const generatePostIdeaBtn = document.getElementById('generatePostIdeaBtn');
+            const postIdeaOutput = document.getElementById('postIdeaOutput');
+            const ideaLoadingSpinner = document.getElementById('ideaLoadingSpinner');
+            const homeCtaButton = document.getElementById('homeCtaButton'); // New: Home CTA button
+
+            // Initialize Pricing page elements
+            const monthlyToggle = document.getElementById('monthlyToggle');
+            const annualToggle = document.getElementById('annualToggle');
+            const sparkPrice = document.querySelector('#pricing .grid > div:nth-child(1) p.text-5xl');
+            const ignitePrice = document.querySelector('#pricing .grid > div:nth-child(2) p.text-5xl');
+            const amplifyPrice = document.querySelector('#pricing .grid > div:nth-child(3) p.text-5xl');
+
+            // Function to update pricing display
+            function updatePricing(isAnnual) {
+                if (isAnnual) {
+                    monthlyToggle.classList.remove('bg-white', 'shadow-sm');
+                    monthlyToggle.classList.remove('dark:bg-gray-600', 'dark:text-white');
+                    annualToggle.classList.add('bg-white', 'shadow-sm');
+                    annualToggle.classList.add('dark:bg-gray-600', 'dark:text-white');
+                    // Updated annual prices
+                    sparkPrice.innerHTML = '$0<span class="text-xl font-medium text-gray-500">/yr</span>';
+                    ignitePrice.innerHTML = '$399<span class="text-xl font-medium text-gray-500">/yr</span>'; // $39 * 12 * 0.85 (approx)
+                    amplifyPrice.innerHTML = '$999<span class="text-xl font-medium text-gray-500">/yr</span>'; // $99 * 12 * 0.85 (approx)
+                } else {
+                    annualToggle.classList.remove('bg-white', 'shadow-sm');
+                    annualToggle.classList.remove('dark:bg-gray-600', 'dark:text-white');
+                    monthlyToggle.classList.add('bg-white', 'shadow-sm');
+                    monthlyToggle.classList.add('dark:bg-gray-600', 'dark:text-white');
+                    // Updated monthly prices
+                    sparkPrice.innerHTML = '$0<span class="text-xl font-medium text-gray-500">/mo</span>';
+                    ignitePrice.innerHTML = '$39<span class="text-xl font-medium text-gray-500">/mo</span>';
+                    amplifyPrice.innerHTML = '$99<span class="text-xl font-medium text-gray-500">/mo</span>';
+                }
+            }
+            // Initialize pricing to monthly on load
+            updatePricing(false);
+
+            // Initialize Ads page elements
+            const adTopicInput = document.getElementById('adTopicInput');
+            const adPlatformSelect = document.getElementById('adPlatformSelect');
+            const generateAdBtn = document.getElementById('generateAdBtn');
+            const adOutput = document.getElementById('adOutput');
+            const adCopyOutput = document.getElementById('adCopyOutput');
+            const hashtagsOutput = document.getElementById('hashtagsOutput');
+            const adLoadingSpinner = document.getElementById('adLoadingSpinner');
+
+            // Initialize Consultancy page elements
+            const consultancyForm = document.getElementById('consultancyForm');
+            const consultancyName = document.getElementById('consultancyName');
+            const consultancyEmail = document.getElementById('consultancyEmail');
+            const consultancyMessage = document.getElementById('consultancyMessage');
+            const consultancyDate = document.getElementById('consultancyDate');
+            const consultancyTime = document.getElementById('consultancyTime');
+            const submitConsultancyBtn = document.getElementById('submitConsultancyBtn');
+            const consultancyLoadingSpinner = document.getElementById('consultancyLoadingSpinner');
+
+            // Initialize FAQ accordion headers
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+            // Initialize Advanced Features dropdown elements
+            const advancedFeaturesToggle = document.getElementById('advancedFeaturesToggle');
+            const advancedFeaturesDropdown = document.getElementById('advancedFeaturesDropdown');
+
+            // Initialize Blog page elements for outline generation
+            const blogTopicInput = document.getElementById('blogTopicInput');
+            const generateOutlineBtn = document.getElementById('generateOutlineBtn');
+            const blogOutlineOutput = document.getElementById('blogOutlineOutput');
+            const blogOutlineLoadingSpinner = document.getElementById('blogOutlineLoadingSpinner');
+
+
+            // Attach event listeners after elements are initialized
+            if (authModalClose) authModalClose.addEventListener('click', closeAuthModal);
+            if (signUpTab) signUpTab.addEventListener('click', showSignUpTab);
+            if (signInTab) signInTab.addEventListener('click', showSignInTab);
+            if (signUpBtn) signUpBtn.addEventListener('click', async () => {
+                const email = signUpEmailInput.value.trim();
+                const password = signUpPasswordInput.value.trim();
+
+                if (!email || !password) {
+                    showMessageBox('Input Required', 'Please enter both email and password.');
+                    return;
+                }
+                if (password.length < 6) {
+                    showMessageBox('Password Too Short', 'Password must be at least 6 characters long.');
+                    return;
+                }
+
+                signUpBtn.disabled = true;
+                signUpSpinner.classList.remove('hidden');
+
+                try {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showMessageBox('Success!', 'Account created successfully. You are now logged in!');
+                    closeAuthModal();
+                } catch (error) {
+                    console.error("Sign up error:", error);
+                    let errorMessage = 'Failed to create account.';
+                    if (error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'This email is already in use. Please try logging in or use a different email.';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'Invalid email address.';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage = 'Password is too weak. Please choose a stronger one.';
+                    }
+                    showMessageBox('Sign Up Failed', errorMessage);
+                } finally {
+                    signUpBtn.disabled = false;
+                    signUpSpinner.classList.add('hidden');
+                }
+            });
+            if (signInBtn) signInBtn.addEventListener('click', async () => {
+                const email = signInEmailInput.value.trim();
+                const password = signInPasswordInput.value.trim();
+
+                if (!email || !password) {
+                    showMessageBox('Input Required', 'Please enter both email and password.');
+                    return;
+                }
+
+                signInBtn.disabled = true;
+                signInSpinner.classList.remove('hidden');
+
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showMessageBox('Success!', 'Logged in successfully!');
+                    closeAuthModal();
+                } catch (error) {
+                    console.error("Sign in error:", error);
+                    let errorMessage = 'Failed to log in.';
+                    if (error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        errorMessage = 'Invalid email or password.';
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = 'Too many failed login attempts. Please try again later.';
+                    }
+                    showMessageBox('Sign In Failed', errorMessage);
+                } finally {
+                    signInBtn.disabled = false;
+                    signInSpinner.classList.add('hidden');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo(link.dataset.page);
+                });
+            });
+
+            if (generatePostIdeaBtn) generatePostIdeaBtn.addEventListener('click', async () => {
+                const passion = passionInput.value.trim();
+                if (!passion) {
+                    showMessageBox('Input Required', 'Please enter your professional passion to generate a post idea.');
+                    return;
+                }
+
+                // Show loading spinner
+                generatePostIdeaBtn.disabled = true;
+                if (ideaLoadingSpinner) ideaLoadingSpinner.classList.remove('hidden');
+                if (postIdeaOutput) postIdeaOutput.classList.add('hidden'); // Hide previous output
+
+                try {
+                    // Ensure Firebase is ready before proceeding
+                    while (!window.isAuthReady()) {
+                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                    }
+
+                    const currentUserId = window.getUserId();
+                    if (!currentUserId) {
+                        showMessageBox('Authentication Error', 'Could not get user ID. Please try again.');
+                        return;
+                    }
+
+                    const prompt = `Generate a compelling and authentic social media post idea (headline and 2-3 sentences description) for someone whose biggest professional passion is "${passion}". The idea should be courageous, easy to understand, and authentic. Focus on a single, actionable idea.`;
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // Canvas will automatically provide this
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Gemini API error:", errorData);
+                        showMessageBox('API Error', `Failed to generate idea: ${errorData.error?.message || 'Unknown error'}`);
+                        return;
+                    }
+
+                    const result = await response.json();
+                    let generatedText = "No idea generated. Please try again.";
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        generatedText = result.candidates[0].content.parts[0].text;
+                    } else {
+                        console.warn("Unexpected Gemini API response structure:", result);
+                    }
+
+                    if (postIdeaOutput) {
+                        postIdeaOutput.textContent = generatedText;
+                        postIdeaOutput.classList.remove('hidden');
+                    }
+
+
+                    // Save the generated idea to Firestore
+                    try {
+                        const postIdeasCollectionRef = window.collection(window.db, `artifacts/${window.appId}/users/${currentUserId}/postIdeas`);
+                        await window.addDoc(postIdeasCollectionRef, {
+                            passion: passion,
+                            generatedIdea: generatedText,
+                            timestamp: window.serverTimestamp(),
+                            userId: currentUserId
+                        });
+                        console.log("Post idea saved to Firestore successfully!");
+                    } catch (firestoreError) {
+                        console.error("Error saving post idea to Firestore:", firestoreError);
+                        showMessageBox('Save Error', 'Failed to save the idea. You can still copy it!');
+                    }
+
+                } catch (error) {
+                    console.error("Error generating post idea:", error);
+                    showMessageBox('Generation Failed', 'An error occurred while generating your post idea. Please try again.');
+                } finally {
+                    if (generatePostIdeaBtn) generatePostIdeaBtn.disabled = false;
+                    if (ideaLoadingSpinner) ideaLoadingSpinner.classList.add('hidden');
+                }
+            });
+
+            if (homeCtaButton) { // New: Home CTA button event listener
+                homeCtaButton.addEventListener('click', () => navigateTo('knowledge-quiz')); // Changed to navigate to knowledge-quiz
+            }
+
+
+            if (monthlyToggle) monthlyToggle.addEventListener('click', () => updatePricing(false));
+            if (annualToggle) annualToggle.addEventListener('click', () => updatePricing(true));
+
+
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('i');
+
+                    // Close all other open accordions
+                    accordionHeaders.forEach(otherHeader => {
+                        if (otherHeader !== header) {
+                            otherHeader.nextElementSibling.classList.remove('open');
+                            otherHeader.nextElementSibling.style.maxHeight = null;
+                            otherHeader.querySelector('i').classList.remove('rotate-180');
+                            otherHeader.classList.remove('rounded-b-none'); // Remove rounded bottom for closed headers
+                        }
+                    });
+
+                    // Toggle current accordion
+                    content.classList.toggle('open');
+                    icon.classList.toggle('rotate-180');
+                    if (content.classList.contains('open')) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        header.classList.add('rounded-b-none'); // Remove rounded bottom when open
+                    } else {
+                        content.style.maxHeight = null;
+                        header.classList.remove('rounded-b-none');
+                    }
+                });
+            });
+
+            if (generateAdBtn) generateAdBtn.addEventListener('click', async () => {
+                const adTopic = adTopicInput.value.trim();
+                const adPlatform = adPlatformSelect.value;
+
+                if (!adTopic) {
+                    showMessageBox('Input Required', 'Please describe your ad topic to generate ad copy and hashtags.');
+                    return;
+                }
+
+                // Show loading spinner
+                generateAdBtn.disabled = true;
+                if (adLoadingSpinner) adLoadingSpinner.classList.remove('hidden');
+                if (adOutput) adOutput.classList.add('hidden'); // Hide previous output
+
+                try {
+                    // Ensure Firebase is ready before proceeding
+                    while (!window.isAuthReady()) {
+                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                    }
+
+                    const currentUserId = window.getUserId();
+                    if (!currentUserId) {
+                        showMessageBox('Authentication Error', 'Could not get user ID. Please try again.');
+                        return;
+                    }
+
+                    const prompt = `Generate compelling ad copy (headline, body text) and a list of 5-10 relevant, high-SEO hashtags for an ad about "${adTopic}" targeting the "${adPlatform}" platform. The ad copy should be concise, engaging, and persuasive. The hashtags should be popular and relevant for discoverability. Provide the output in a structured format like:
+                    Ad Copy:
+                    [Headline]
+                    [Body Text]
+
+                    Hashtags:
+                    [#hashtag1 #hashtag2 #hashtag3 ...]`;
+
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // Canvas will automatically provide this
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Gemini API error:", errorData);
+                        showMessageBox('API Error', `Failed to generate ad: ${errorData.error?.message || 'Unknown error'}`);
+                        return;
+                    }
+
+                    const result = await response.json();
+                    let generatedText = "No ad copy or hashtags generated. Please try again.";
+                    let adCopy = "";
+                    let hashtags = "";
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        generatedText = result.candidates[0].content.parts[0].text;
+
+                        // Parse the structured output
+                        const lines = generatedText.split('\n');
+                        let currentSection = '';
+                        for (const line of lines) {
+                            if (line.startsWith('Ad Copy:')) {
+                                currentSection = 'adCopy';
+                                continue;
+                            } else if (line.startsWith('Hashtags:')) {
+                                currentSection = 'hashtags';
+                                continue;
+                            }
+
+                            if (currentSection === 'adCopy' && line.trim() !== '') {
+                                adCopy += line.trim() + '<br>';
+                            } else if (currentSection === 'hashtags' && line.trim() !== '') {
+                                hashtags += line.trim();
+                            }
+                        }
+                        adCopy = adCopy.replace(/<br>$/, ''); // Remove trailing <br>
+                    } else {
+                        console.warn("Unexpected Gemini API response structure for ads:", result);
+                    }
+
+                    if (adCopyOutput) adCopyOutput.innerHTML = adCopy || "N/A";
+                    if (hashtagsOutput) hashtagsOutput.textContent = hashtags || "N/A";
+                    if (adOutput) adOutput.classList.remove('hidden');
+
+
+                    // Save the generated ad to Firestore
+                    try {
+                        const adsCollectionRef = window.collection(window.db, `artifacts/${window.appId}/users/${currentUserId}/generatedAds`);
+                        await window.addDoc(adsCollectionRef, {
+                            adTopic: adTopic,
+                            adPlatform: adPlatform,
+                            adCopy: adCopy,
+                            hashtags: hashtags,
+                            timestamp: window.serverTimestamp(),
+                            userId: currentUserId
+                        });
+                        console.log("Ad data saved to Firestore successfully!");
+                    } catch (firestoreError) {
+                        console.error("Error saving ad data to Firestore:", firestoreError);
+                        showMessageBox('Save Error', 'Failed to save the ad data. You can still copy it!');
+                    }
+
+                } catch (error) {
+                    console.error("Error generating ad:", error);
+                    showMessageBox('Generation Failed', 'An error occurred while generating your ad. Please try again.');
+                } finally {
+                    if (generateAdBtn) generateAdBtn.disabled = false;
+                    if (adLoadingSpinner) adLoadingSpinner.classList.add('hidden');
+                }
+            });
+
+            if (consultancyForm) consultancyForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Prevent default form submission
+
+                const name = consultancyName.value.trim();
+                const email = consultancyEmail.value.trim();
+                const message = consultancyMessage.value.trim();
+                const date = consultancyDate.value.trim();
+                const time = consultancyTime.value.trim();
+
+                if (!name || !email || !message) {
+                    showMessageBox('Input Required', 'Please fill in all required fields (Name, Email, Message).');
+                    return;
+                }
+
+                // Basic email validation
+                if (!/\S+@\S+\.\S+/.test(email)) {
+                    showMessageBox('Invalid Email', 'Please enter a valid email address.');
+                    return;
+                }
+
+                // Show loading spinner
+                if (submitConsultancyBtn) submitConsultancyBtn.disabled = true;
+                if (consultancyLoadingSpinner) consultancyLoadingSpinner.classList.remove('hidden');
+
+                try {
+                    // Ensure Firebase is ready before proceeding
+                    while (!window.isAuthReady()) {
+                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                    }
+
+                    const currentUserId = window.getUserId();
+                    if (!currentUserId) {
+                        showMessageBox('Authentication Error', 'Could not get user ID. Please try again.');
+                        return;
+                    }
+
+                    const consultancyRequestsCollectionRef = window.collection(window.db, `artifacts/${window.appId}/users/${currentUserId}/consultancyRequests`);
+                    await window.addDoc(consultancyRequestsCollectionRef, {
+                        name: name,
+                        email: email,
+                        message: message,
+                        preferredDate: date,
+                        preferredTime: time,
+                        timestamp: window.serverTimestamp(),
+                        userId: currentUserId
+                    });
+
+                    showMessageBox('Request Sent!', 'Your consultancy request has been successfully submitted. We will get back to you soon!');
+                    consultancyForm.reset(); // Clear the form
+
+                } catch (error) {
+                    console.error("Error submitting consultancy request:", error);
+                    showMessageBox('Submission Failed', 'An error occurred while submitting your request. Please try again.');
+                } finally {
+                    if (submitConsultancyBtn) submitConsultancyBtn.disabled = false;
+                    if (consultancyLoadingSpinner) consultancyLoadingSpinner.classList.add('hidden');
+                }
+            });
+
+            if (submitQuizBtn) submitQuizBtn.addEventListener('click', submitQuiz);
+
+            // Advanced Features Dropdown Toggle
+            if (advancedFeaturesToggle && advancedFeaturesDropdown) {
+                advancedFeaturesToggle.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent document click from immediately closing
+                    advancedFeaturesDropdown.classList.toggle('hidden');
+                });
+
+                // Close dropdown if clicked outside
+                document.addEventListener('click', (event) => {
+                    if (!advancedFeaturesToggle.contains(event.target) && !advancedFeaturesDropdown.contains(event.target)) {
+                        advancedFeaturesDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Blog Post Outline Generator Event Listener
+            if (generateOutlineBtn) generateOutlineBtn.addEventListener('click', async () => {
+                const blogTopic = blogTopicInput.value.trim();
+                if (!blogTopic) {
+                    showMessageBox('Input Required', 'Please enter a blog topic to generate an outline.');
+                    return;
+                }
+
+                // Show loading spinner
+                generateOutlineBtn.disabled = true;
+                if (blogOutlineLoadingSpinner) blogOutlineLoadingSpinner.classList.remove('hidden');
+                if (blogOutlineOutput) blogOutlineOutput.classList.add('hidden'); // Hide previous output
+
+                try {
+                    // Ensure Firebase is ready before proceeding
+                    while (!window.isAuthReady()) {
+                        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 100ms
+                    }
+
+                    const currentUserId = window.getUserId();
+                    if (!currentUserId) {
+                        showMessageBox('Authentication Error', 'Could not get user ID. Please try again.');
+                        return;
+                    }
+
+                    const prompt = `Generate a detailed and comprehensive blog post outline for the topic: "${blogTopic}". The outline should include a compelling title, an introduction section, 3-5 main sections with at least 2-3 sub-points each, and a conclusion. Use Markdown formatting for the outline (e.g., # for title, ## for main sections, ### for sub-points, and bullet points for key ideas).`;
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // Canvas will automatically provide this
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error("Gemini API error:", errorData);
+                        showMessageBox('API Error', `Failed to generate outline: ${errorData.error?.message || 'Unknown error'}`);
+                        return;
+                    }
+
+                    const result = await response.json();
+                    let generatedText = "No outline generated. Please try again.";
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        generatedText = result.candidates[0].content.parts[0].text;
+                    } else {
+                        console.warn("Unexpected Gemini API response structure for blog outline:", result);
+                    }
+
+                    if (blogOutlineOutput) {
+                        // Replace newlines with <br> for HTML display, and handle markdown for basic formatting
+                        blogOutlineOutput.innerHTML = generatedText.replace(/\n/g, '<br>')
+                            .replace(/### (.*)/g, '<h4 class="text-lg font-semibold mt-2">$1</h4>')
+                            .replace(/## (.*)/g, '<h3 class="text-xl font-bold mt-4">$1</h3>')
+                            .replace(/# (.*)/g, '<h2 class="text-2xl font-bold mb-4">$1</h2>')
+                            .replace(/\* (.*)/g, '<li class="ml-4 list-disc">$1</li>'); // Basic bullet point handling
+
+
+                        blogOutlineOutput.classList.remove('hidden');
+                    }
+
+                    // Save the generated outline to Firestore
+                    try {
+                        const blogOutlinesCollectionRef = window.collection(window.db, `artifacts/${window.appId}/users/${currentUserId}/blogOutlines`);
+                        await window.addDoc(blogOutlinesCollectionRef, {
+                            topic: blogTopic,
+                            generatedOutline: generatedText,
+                            timestamp: window.serverTimestamp(),
+                            userId: currentUserId
+                        });
+                        console.log("Blog outline saved to Firestore successfully!");
+                    } catch (firestoreError) {
+                        console.error("Error saving blog outline to Firestore:", firestoreError);
+                        showMessageBox('Save Error', 'Failed to save the blog outline. You can still copy it!');
+                    }
+
+                } catch (error) {
+                    console.error("Error generating blog outline:", error);
+                    showMessageBox('Generation Failed', 'An error occurred while generating your blog outline. Please try again.');
+                } finally {
+                    if (generateOutlineBtn) generateOutlineBtn.disabled = false;
+                    if (blogOutlineLoadingSpinner) blogOutlineLoadingSpinner.classList.add('hidden');
+                }
+            });
+
+
+            const initialHash = window.location.hash.substring(1) || 'home';
+            navigateTo(initialHash);
+            updateAuthUI(); // Ensure auth UI is updated on load
+        });
+    </script>
+
+    <!-- Global Message Box -->
+    <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-700 rounded-lg shadow-xl p-6 max-w-sm w-full text-center text-gray-100">
+            <h3 id="messageBoxTitle" class="text-xl font-semibold mb-4 text-white"></h3>
+            <p id="messageBoxContent" class="text-gray-300 mb-6"></p>
+            <button id="messageBoxClose" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-300">Close</button>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full relative">
+            <button id="authModalClose" class="absolute top-4 right-4 text-gray-400 hover:text-gray-200 text-2xl">&times;</button>
+            <div class="flex justify-center mb-6 border-b border-gray-700">
+                <button id="signUpTab" class="auth-modal-tab active">Sign Up</button>
+                <button id="signInTab" class="auth-modal-tab">Sign In</button>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signUpForm" class="auth-form-content">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">Create Your Account</h2>
+                <div class="mb-4">
+                    <label for="signUpEmail" class="block text-gray-300 text-sm font-semibold mb-2">Email:</label>
+                    <input type="email" id="signUpEmail" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="your@email.com">
+                </div>
+                <div class="mb-6">
+                    <label for="signUpPassword" class="block text-gray-300 text-sm font-semibold mb-2">Password:</label>
+                    <input type="password" id="signUpPassword" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="••••••••">
+                    <p class="text-xs text-gray-400 mt-1">Minimum 6 characters</p>
+                </div>
+                <button id="signUpBtn" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-md flex items-center justify-center">
+                    Sign Up
+                    <span id="signUpSpinner" class="spinner ml-3 hidden"></span>
+                </button>
+            </div>
+
+            <!-- Sign In Form -->
+            <div id="signInForm" class="auth-form-content hidden">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">Welcome Back!</h2>
+                <div class="mb-4">
+                    <label for="signInEmail" class="block text-gray-300 text-sm font-semibold mb-2">Email:</label>
+                    <input type="email" id="signInEmail" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="your@email.com">
+                </div>
+                <div class="mb-6">
+                    <label for="signInPassword" class="block text-gray-300 text-sm font-semibold mb-2">Password:</label>
+                    <input type="password" id="signInPassword" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="••••••••">
+                </div>
+                <button id="signInBtn" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-md flex items-center justify-center">
+                    Sign In
+                    <span id="signInSpinner" class="spinner ml-3 hidden"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header (Overall Navigation Bar) -->
+    <header class="bg-gray-800 shadow-sm py-4 px-6 sticky top-0 z-40">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#home" class="nav-link text-2xl font-bold text-purple-400" data-page="home">Ignite</a>
+            <ul class="flex space-x-8 items-center">
+                <li><a href="#home" class="nav-link text-gray-300 hover:text-purple-400 transition duration-300 font-medium py-2 px-3" data-page="home">Features</a></li>
+                <li><a href="#pricing" class="nav-link text-gray-300 hover:text-purple-400 transition duration-300 font-medium py-2 px-3" data-page="pricing">Pricing</a></li>
+                <li><a href="#blog" class="nav-link text-gray-300 hover:text-purple-400 transition duration-300 font-medium py-2 px-3" data-page="blog">Blog</a></li>
+                <li class="relative group">
+                    <button id="advancedFeaturesToggle" class="text-gray-300 hover:text-purple-400 transition duration-300 font-medium py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+                        Advanced Features <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <ul id="advancedFeaturesDropdown" class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
+                        <li><a href="#ads" class="nav-link block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" data-page="ads">Ads</a></li>
+                        <li><a href="#consultancy" class="nav-link block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" data-page="consultancy">Consultancy</a></li>
+                        <li><a href="#advanced-features" class="nav-link block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" data-page="advanced-features">All Advanced Features</a></li>
+                        <li><a href="#about-us" class="nav-link block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" data-page="about-us">About Us</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="flex space-x-4 items-center">
+                <!-- Theme toggle button removed -->
+                <button id="authButton" class="px-5 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition duration-300 font-medium">Log In</button>
+                <!-- Knowledge Quiz Button -->
+                <a href="#knowledge-quiz" class="nav-link bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-md header-quiz-glow-button" data-page="knowledge-quiz">Ignite Challenge</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto py-12 px-6">
+
+        <!-- Page 1: Home -->
+        <section id="home" class="page-section active">
+            <!-- Hero Section -->
+            <div class="flex flex-col lg:flex-row items-center justify-between py-16 gap-12">
+                <div class="lg:w-1/2 text-center lg:text-left">
+                    <h1 class="text-5xl font-extrabold leading-tight text-white mb-6">From Blank Page to Bold Brand.</h1>
+                    <p class="text-xl text-gray-300 mb-8">Stop staring at a blinking cursor. Ignite is your AI-powered Personal Brand OS that turns your authentic expertise into consistent, magnetic content. Effortlessly.</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <input type="text" id="passionInput" placeholder="Enter your biggest professional passion..." class="flex-grow p-4 border border-gray-600 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white">
+                        <button id="generatePostIdeaBtn" class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg flex items-center justify-center">
+                            Generate My First Post Idea <i class="fas fa-arrow-right ml-2"></i>
+                            <span id="ideaLoadingSpinner" class="spinner ml-3 hidden"></span>
+                        </button>
+                    </div>
+                    <p id="postIdeaOutput" class="mt-8 p-4 bg-purple-900 border border-purple-700 rounded-lg text-purple-200 text-lg hidden"></p>
+                    <p class="text-gray-400 text-sm mt-6">Trusted by aspiring creators, industry experts, and ambitious professionals just like you.</p>
+                </div>
+                <div class="lg:w-1/2 flex justify-center lg:justify-end">
+                    <img src="https://placehold.co/600x400/8b5cf6/ffffff?text=Ignite+Dashboard" alt="Ignite Dashboard" class="rounded-xl shadow-2xl transform hover:scale-105 transition duration-500 ease-in-out">
+                </div>
+            </div>
+
+            <!-- Pain Point Section -->
+            <div class="py-16 bg-gray-800 rounded-xl shadow-lg mt-16">
+                <h2 class="text-4xl font-bold text-center text-white mb-12">Does This Sound Familiar?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-8">
+                    <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-sm">
+                        <i class="fas fa-file-alt text-purple-600 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">"Blank Page Syndrome"</h3>
+                        <p class="text-gray-300">You sit down to post, but your mind is empty. The pressure to be brilliant right now is paralyzing. (68% feel this)</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-sm">
+                        <i class="fas fa-unlink text-purple-600 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">"Consistency Killers"</h3>
+                        <p class="text-gray-300">You start with a burst of energy, but life gets in the way. Your content stream dries up, and so does your momentum. (62% struggle)</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-sm">
+                        <i class="fas fa-clock text-purple-600 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">"Time Poverty"</h3>
+                        <p class="text-gray-300">The hours spent researching, scripting, editing, and posting are hours you just don't have. (58% are overwhelmed)</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-6 bg-gray-700 rounded-lg shadow-sm">
+                        <i class="fas fa-mask text-purple-600 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-white mb-2">"Authenticity Anxiety"</h3>
+                        <p class="text-gray-300">You’re terrified of sounding like a generic robot or a salesy guru. How do you find your voice? (55% worry)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solution Section -->
+            <div class="py-16 mt-16">
+                <h2 class="text-4xl font-bold text-center text-white mb-6">Ignite Is Your Personal Brand Catalyst. Not Another Generic AI.</h2>
+                <p class="text-xl text-gray-300 text-center mb-12 max-w-3xl mx-auto">Other tools give you content. Ignite gives you courage, consistency, and a system built around your unique DNA.</p>
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+                    <div class="lg:w-1/2 flex justify-center lg:justify-start">
+                        <img src="https://placehold.co/500x350/a78bfa/ffffff?text=Brand+DNA+Graphic" alt="Brand DNA Graphic" class="rounded-xl shadow-xl transform hover:scale-105 transition duration-500 ease-in-out">
+                    </div>
+                    <div class="lg:w-1/2 space-y-8 text-center lg:text-left">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-white mb-2">Find Your Voice (Not Ours)</h3>
+                            <p class="text-gray-300">Through a simple onboarding interview, Ignite's Brand DNA Engine learns your stories, tone, and expertise. All content starts with you.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-white mb-2">Endless Authentic Ideas</h3>
+                            <p class="text-gray-300">Our Spark Engine connects your DNA to real-time trends, generating relevant ideas you’re actually excited to talk about.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold text-white mb-2">Create on Autopilot</h3>
+                            <p class="text-gray-300">The Flow Builder turns your ideas into platform-specific drafts—from LinkedIn articles to TikTok scripts—in seconds, freeing you to do what you do best.</p>
+                        </div>
+                        <button class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg">See All Features</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How Ignite Wins Section (Comparison Table) -->
+            <div class="py-16 bg-gray-800 rounded-xl shadow-lg mt-16">
+                <h2 class="text-4xl font-bold text-center text-white mb-12">The All-in-One System for Building a Brand That Lasts</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="bg-gray-700">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider rounded-tl-lg">Feature</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Generic AI (Jasper/Copy.ai)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Schedulers (Buffer/Hootsuite)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider rounded-tr-lg">Ignite (Your Brand OS)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-gray-800 divide-y divide-gray-700">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Voice & Tone</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ Generic, requires heavy editing</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ N/A</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Learns Your Authentic Voice</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Idea Generation</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">🤖 Basic, trend-based</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ N/A</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">💡 Personalized to Your Expertise</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Content Creation</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Yes</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ No</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ AI-Assisted & Repurposed</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Strategic Narrative</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ One-off posts</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ Just a queue</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Builds a Story Over Time</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Brand Goal Tracking</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ No</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ No</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Content Aligned to Your Goals</td>
+                            </tr>
+                            <!-- New rows for differentiation -->
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Dynamic Personalization</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ Static profile</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ N/A</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Continuously Learns & Adapts</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Emotional & Sentiment Analysis</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ No</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ No</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Content Emotional Resonance</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Predictive Performance</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ Basic analytics</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">✅ Basic scheduling insights</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Forecasts & Optimizes Content</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Brand Storytelling</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ Disjointed posts</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">❌ N/A</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-semibold">✅ Builds Cohesive Narrative</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Testimonial Section -->
+            <div class="py-16 mt-16">
+                <h2 class="text-4xl font-bold text-center text-white mb-12">What Our Users Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-800 p-8 rounded-xl shadow-lg text-center flex flex-col items-center">
+                        <img src="https://placehold.co/100x100/8b5cf6/ffffff?text=Sarah+L." alt="Sarah L." class="rounded-full w-24 h-24 object-cover mb-4 shadow-md">
+                        <p class="text-lg italic text-gray-300 mb-4">"Ignite is the cure for content burnout. I went from posting once a month to having a full, authentic content plan I'm proud of. I finally sound like me."</p>
+                        <p class="font-semibold text-purple-400">— Sarah L., Founder & SME</p>
+                    </div>
+                    <div class="bg-gray-800 p-8 rounded-xl shadow-lg text-center flex flex-col items-center">
+                        <img src="https://placehold.co/100x100/a78bfa/ffffff?text=David+C." alt="David Chen" class="rounded-full w-24 h-24 object-cover mb-4 shadow-md">
+                        <p class="text-lg italic text-gray-300 mb-4">"The Spark Engine is magic. It took my jumbled thoughts and turned them into clear, powerful ideas. I haven't stared at a blank page since."</p>
+                        <p class="font-semibold text-purple-400">— David Chen, Tech Professional</p>
+                    </div>
+                    <div class="bg-gray-800 p-8 rounded-xl shadow-lg text-center flex flex-col items-center">
+                        <img src="https://placehold.co/100x100/c084fc/ffffff?text=Maria+F." alt="Maria Flores" class="rounded-full w-24 h-24 object-cover mb-4 shadow-md">
+                        <p class="text-lg italic text-gray-300 mb-4">"As an aspiring creator, the fear of being 'cringey' was real. Ignite gave me the structure and confidence to just start. It's like having a personal brand coach on call 24/7."</p>
+                        <p class="font-semibold text-purple-400">— Maria Flores, Aspiring Creator</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final CTA Section -->
+            <div class="py-16 mt-16 bg-purple-700 text-white rounded-xl shadow-lg text-center">
+                <h2 class="text-4xl font-bold mb-4">Ready to Be Undeniable?</h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">Stop waiting for inspiration. Start building your legacy today. Your first authentic post is just one minute away.</p>
+                <button id="homeCtaButton" class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg home-cta-button-style">Start Your Free 1-Minute Challenge</button>
+            </div>
+        </section>
+
+        <!-- Page 2: Pricing -->
+        <section id="pricing" class="page-section">
+            <div class="py-16 text-center">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Choose Your Plan. Find Your Voice.</h1>
+                <p class="text-xl text-gray-300 mb-12">No hidden fees. No long-term contracts. Just the courage and consistency to build your brand.</p>
+
+                <!-- Pricing Toggle -->
+                <div class="inline-flex bg-gray-700 rounded-full p-1 mb-12">
+                    <button id="monthlyToggle" class="px-6 py-2 rounded-full text-white font-semibold bg-gray-600 shadow-sm transition duration-300">Monthly</button>
+                    <button id="annualToggle" class="px-6 py-2 rounded-full text-gray-300 font-semibold hover:bg-gray-700 transition duration-300">Annual (Save 20%)</button>
+                </div>
+
+                <!-- Pricing Table -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Spark Plan -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 flex flex-col items-center text-center border-2 border-purple-900">
+                        <h3 class="text-2xl font-bold text-purple-400 mb-2">Spark</h3>
+                        <p class="text-5xl font-extrabold text-white mb-4">$0<span class="text-xl font-medium text-gray-400">/mo</span></p>
+                        <p class="text-gray-300 mb-6">For getting started & conquering the blank page.</p>
+                        <button class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-md mb-8">Start for Free</button>
+                        <ul class="text-left text-gray-200 space-y-3">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> The 1-Minute Brand Challenge</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 1 Brand DNA Profile</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 5 "Spark Engine" Idea Generations / mo</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 5 AI Content Drafts / mo</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Basic Community Access</li>
+                        </ul>
+                    </div>
+
+                    <!-- Ignite Plan -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 flex flex-col items-center text-center border-2 border-purple-500 transform scale-105">
+                        <h3 class="text-2xl font-bold text-purple-400 mb-2">Ignite</h3>
+                        <p class="text-5xl font-extrabold text-white mb-4">$39<span class="text-xl font-medium text-gray-400">/mo</span></p>
+                        <p class="text-gray-300 mb-6">For the individual ready to build authority consistently.</p>
+                        <button class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-md mb-8 header-quiz-glow-button">Start Your Free Trial</button>
+                        <ul class="text-left text-gray-200 space-y-3">
+                            <li class="flex items-center font-bold text-white"><i class="fas fa-check-circle text-green-500 mr-2"></i> Everything in Spark, plus:</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Unlimited Brand DNA Profiles</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Unlimited Idea Generations</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Unlimited AI Content Drafts</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Full Flow Builder (Smart Repurposing)</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Full Amplify Hub (Platform Intelligence)</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Brand Compass (Goal Tracking)</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Full Community Access (Collaboration)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Amplify Plan -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 flex flex-col items-center text-center border-2 border-purple-900">
+                        <h3 class="text-2xl font-bold text-purple-400 mb-2">Amplify</h3>
+                        <p class="text-5xl font-extrabold text-white mb-4">$99<span class="text-xl font-medium text-gray-400">/mo</span></p>
+                        <p class="text-gray-300 mb-6">For teams & agencies managing multiple brands.</p>
+                        <button class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-md mb-8">Request a Demo</button>
+                        <ul class="text-left text-gray-200 space-y-3">
+                            <li class="flex items-center font-bold text-white"><i class="fas fa-check-circle text-green-500 mr-2"></i> Everything in Ignite, plus:</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 5 Brand DNA Profiles</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Unlimited Idea Generations</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Team Collaboration (Shared workspace)</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Multiple User Seats (3 included)</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Consolidated Billing</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Priority Support</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Pricing FAQ Section -->
+                <div class="py-16 mt-16 bg-gray-800 rounded-xl shadow-lg p-8">
+                    <h2 class="text-4xl font-bold text-white mb-12">Frequently Asked Questions</h2>
+                    <div class="max-w-3xl mx-auto space-y-4">
+                        <!-- FAQ Item 1 -->
+                        <div class="border border-gray-700 rounded-lg">
+                            <div class="accordion-header p-5 flex justify-between items-center rounded-t-lg">
+                                <h3 class="text-lg font-semibold text-gray-200">Can I cancel anytime?</h3>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                            </div>
+                            <div class="accordion-content px-5 pb-5 text-gray-300">
+                                <p class="pt-4">Yes. You can cancel your subscription at any time from your account dashboard. You'll retain access until the end of your billing period.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 2 -->
+                        <div class="border border-gray-700 rounded-lg">
+                            <div class="accordion-header p-5 flex justify-between items-center">
+                                <h3 class="text-lg font-semibold text-gray-200">What is a "Brand DNA Profile"?</h3>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                            </div>
+                            <div class="accordion-content px-5 pb-5 text-gray-300">
+                                <p class="pt-4">It's the core of Ignite! It's a living profile created from your onboarding interview that captures your unique voice, expertise, stories, and goals, which our AI uses to generate authentic content.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 3 -->
+                        <div class="border border-gray-700 rounded-lg">
+                            <div class="accordion-header p-5 flex justify-between items-center">
+                                <h3 class="text-lg font-semibold text-gray-200">What if I don't like the AI-generated content?</h3>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                            </div>
+                            <div class="accordion-content px-5 pb-5 text-gray-300">
+                                <p class="pt-4">Our drafts are designed to be a powerful starting point, not a finished product. You have full control to edit, refine, and ensure every piece of content perfectly reflects you. The goal is to save you 80% of the effort.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 4 -->
+                        <div class="border border-gray-700 rounded-lg">
+                            <div class="accordion-header p-5 flex justify-between items-center rounded-b-lg">
+                                <h3 class="text-lg font-semibold text-gray-200">Do you offer discounts for non-profits or students?</h3>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                            </div>
+                            <div class="accordion-content px-5 pb-5 text-gray-300">
+                                <p class="pt-4">Yes! Please contact our support team with your details to learn more about our special programs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 3: Ads Generation -->
+        <section id="ads" class="page-section">
+            <div class="py-16 text-center">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Generate Ads & SEO Hashtags</h1>
+                <p class="text-xl text-gray-300 mb-12">Craft compelling ad copy and discover high-impact hashtags for maximum reach.</p>
+
+                <div class="bg-gray-800 rounded-xl shadow-lg p-8 max-w-3xl mx-auto">
+                    <div class="mb-6 text-left">
+                        <label for="adTopicInput" class="block text-gray-300 text-lg font-semibold mb-2">What is your ad about?</label>
+                        <textarea id="adTopicInput" rows="4" class="w-full p-4 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="e.g., 'A new online course on digital marketing for beginners', 'A sustainable fashion brand promoting eco-friendly clothing'"></textarea>
+                    </div>
+                    <div class="mb-8 text-left">
+                        <label for="adPlatformSelect" class="block text-gray-300 text-lg font-semibold mb-2">Target Platform:</label>
+                        <select id="adPlatformSelect" class="w-full p-4 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white">
+                            <option value="general">General Ad</option>
+                            <option value="facebook">Facebook Ad</option>
+                            <option value="instagram">Instagram Ad</option>
+                            <option value="linkedin">LinkedIn Ad</option>
+                            <option value="twitter">Twitter Ad</option>
+                        </select>
+                    </div>
+                    <button id="generateAdBtn" class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg flex items-center justify-center mx-auto">
+                        Generate Ad & Hashtags <i class="fas fa-magic ml-2"></i>
+                        <span id="adLoadingSpinner" class="spinner ml-3 hidden"></span>
+                    </button>
+
+                    <div id="adOutput" class="mt-12 p-6 bg-purple-900 border border-purple-700 rounded-lg text-purple-200 text-left hidden">
+                        <h3 class="text-xl font-bold mb-4">Generated Ad Copy:</h3>
+                        <p id="adCopyOutput" class="mb-6"></p>
+                        <h3 class="text-xl font-bold mb-4">Suggested Hashtags:</h3>
+                        <p id="hashtagsOutput" class="font-mono text-sm"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 4: Blog -->
+        <section id="blog" class="page-section">
+            <div class="py-16 text-center">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Ignite Blog</h1>
+                <p class="text-xl text-gray-300 mb-12">Insights, strategies, and inspiration for building your authentic personal brand.</p>
+
+                <!-- Blog Post Outline Generator -->
+                <div class="bg-gray-800 rounded-xl shadow-lg p-8 max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl font-bold text-white mb-6">Generate Blog Post Outline ✨</h2>
+                    <div class="mb-6 text-left">
+                        <label for="blogTopicInput" class="block text-gray-300 text-lg font-semibold mb-2">Enter your blog post topic:</label>
+                        <textarea id="blogTopicInput" rows="3" class="w-full p-4 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="e.g., 'The Future of AI in Personal Branding', 'How to Build a Strong LinkedIn Presence'"></textarea>
+                    </div>
+                    <button id="generateOutlineBtn" class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg flex items-center justify-center mx-auto">
+                        Generate Outline <i class="fas fa-lightbulb ml-2"></i>
+                        <span id="blogOutlineLoadingSpinner" class="spinner ml-3 hidden"></span>
+                    </button>
+
+                    <div id="blogOutlineOutput" class="mt-12 p-6 bg-purple-900 border border-purple-700 rounded-lg text-purple-200 text-left hidden">
+                        <!-- Generated outline will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-xl shadow-lg p-8 max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-white mb-4">Coming Soon!</h2>
+                    <p class="text-lg text-gray-300">We're busy crafting valuable content to help you on your personal branding journey. Check back soon for new articles!</p>
+                    <img src="https://placehold.co/400x250/d8b4fe/ffffff?text=Blog+Coming+Soon" alt="Blog Coming Soon" class="mt-8 mx-auto rounded-lg shadow-md">
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 5: Consultancy -->
+        <section id="consultancy" class="page-section">
+            <div class="py-16 text-center">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Personal Brand Consultancy</h1>
+                <p class="text-xl text-gray-300 mb-12">Get personalized guidance from our experts to accelerate your brand growth. Book a session today.</p>
+
+                <div class="bg-gray-800 rounded-xl shadow-lg p-8 max-w-3xl mx-auto text-left">
+                    <h2 class="text-3xl font-bold text-white mb-6">Book Your Session</h2>
+                    <form id="consultancyForm" class="space-y-6">
+                        <div>
+                            <label for="consultancyName" class="block text-gray-300 text-lg font-semibold mb-2">Your Name:</label>
+                            <input type="text" id="consultancyName" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" required>
+                        </div>
+                        <div>
+                            <label for="consultancyEmail" class="block text-gray-300 text-lg font-semibold mb-2">Your Email:</label>
+                            <input type="email" id="consultancyEmail" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" required>
+                        </div>
+                        <div>
+                            <label for="consultancyMessage" class="block text-gray-300 text-lg font-semibold mb-2">Tell us about your brand goals:</label>
+                            <textarea id="consultancyMessage" rows="5" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="e.g., 'I want to increase my LinkedIn engagement', 'I need help defining my niche'"></textarea>
+                        </div>
+                        <div>
+                            <label for="consultancyDate" class="block text-gray-300 text-lg font-semibold mb-2">Preferred Date:</label>
+                            <input type="date" id="consultancyDate" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white">
+                        </div>
+                        <div>
+                            <label for="consultancyTime" class="block text-gray-300 text-lg font-semibold mb-2">Preferred Time (e.g., 10:00 AM PST):</label>
+                            <input type="text" id="consultancyTime" class="w-full p-3 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 bg-gray-700 text-white" placeholder="e.g., 10:00 AM PST, 3:00 PM GMT">
+                        </div>
+                        <button type="submit" id="submitConsultancyBtn" class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg flex items-center justify-center mx-auto">
+                            Submit Request <i class="fas fa-paper-plane ml-2"></i>
+                            <span id="consultancyLoadingSpinner" class="spinner ml-3 hidden"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 7: Brand Building Knowledge Quiz -->
+        <section id="knowledge-quiz" class="page-section">
+            <div class="py-16 text-center">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Ignite Your Brand Superpower Challenge!</h1>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">Ready to uncover your unique brand strengths and identify areas for massive growth? Take our quick 1-minute challenge and instantly **unlock 5 viral title ideas** tailored to skyrocket your content!</p>
+
+                <div class="bg-gray-800 rounded-xl shadow-lg p-8 max-w-3xl mx-auto text-left">
+                    <h2 class="text-3xl font-bold text-white mb-6">Your Challenge Questions:</h2>
+                    <div id="quizContainer" class="space-y-8 mb-8">
+                        <!-- Quiz questions will be rendered here by JavaScript -->
+                    </div>
+                    <button id="submitQuizBtn" class="w-full bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg flex items-center justify-center mx-auto">
+                        Complete Challenge & Unlock Titles <i class="fas fa-rocket ml-2"></i>
+                        <span id="quizLoadingSpinner" class="spinner ml-3 hidden"></span>
+                    </button>
+
+                    <div id="quizResults" class="mt-12 p-6 bg-purple-900 border border-purple-700 rounded-lg text-purple-200 hidden">
+                        <h3 class="text-2xl font-bold mb-4 text-white">Your Challenge Results:</h3>
+                        <p class="text-lg mb-2 text-gray-300">Score: <span id="userScore" class="font-semibold"></span> / <span id="totalQuestions" class="font-semibold"></span></p>
+                        <p class="text-lg mb-4 text-gray-300">Mastery Level: <span id="userPercentage" class="font-semibold"></span>%</p>
+                        <p class="text-lg font-semibold text-purple-300 mb-4">Congratulations! Based on your performance, here are 5 viral title ideas designed to capture attention and amplify your message:</p>
+                        <ul id="viralTitlesList" class="list-disc list-inside mt-4 text-purple-200 space-y-2">
+                            <li>"The Secret to Unstoppable Personal Branding in 2025: Revealed!"</li>
+                            <li>"Unlock Your Expertise: Why Your Niche is Your Next Goldmine"</li>
+                            <li>"From Unknown to Unforgettable: Your 30-Day Brand Blueprint"</li>
+                            <li>"Stop the Scroll: The #1 Content Mistake Killing Your Online Presence"</li>
+                            <li>"Ignite Your Influence: Simple Steps to Go Viral (Even Without a Huge Following)"</li>
+                        </ul>
+                    </div>
+
+                    <div id="leaderboardSection" class="mt-12 p-6 bg-gray-800 border border-gray-700 rounded-lg shadow-sm hidden">
+                        <h3 class="text-2xl font-bold text-white mb-4 text-center">Top Brand Builders Leaderboard</h3>
+                        <table class="min-w-full divide-y divide-gray-700">
+                            <thead class="bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Rank</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">User ID</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Score</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardBody" class="bg-gray-800 divide-y divide-gray-700">
+                                <!-- Leaderboard data will be rendered here -->
+                            </tbody>
+                        </table>
+                        <p id="leaderboardMessage" class="text-center text-gray-300 mt-4 hidden">Sign in to see your rank!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 8: Advanced Features -->
+        <section id="advanced-features" class="page-section">
+            <div class="py-16 text-center">
+                <h1 class="text-5xl font-extrabold text-white mb-4">Ignite's Advanced Features: The Future of Your Brand</h1>
+                <p class="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">Beyond content creation, Ignite offers cutting-edge AI features to truly differentiate and scale your personal brand.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Dynamic Personalization Engine -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-brain text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">Dynamic Personalization Engine</h3>
+                        <p class="text-gray-300">Our AI continuously learns and adapts to your evolving voice, preferences, and audience engagement, making your brand truly alive and responsive.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>Self-learning AI adapts to your evolving brand.</li>
+                            <li>Predicts content resonance based on audience feedback.</li>
+                            <li>Analyzes past posts for style and engaging topics.</li>
+                        </ul>
+                    </div>
+
+                    <!-- AI-Powered Emotional & Sentiment Analysis -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-heartbeat text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">Emotional & Sentiment Analysis</h3>
+                        <p class="text-gray-300">Ensure your message truly connects. Our tool evaluates the emotional tone of your content, suggesting tweaks for deeper, more authentic audience engagement.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>Evaluates emotional tone before posting.</li>
+                            <li>Suggests empathetic and motivational tweaks.</li>
+                            <li>Builds genuine human connections.</li>
+                        </ul>
+                    </div>
+
+                    <!-- AI-Driven Collaboration Features -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-handshake text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">AI-Driven Collaboration</h3>
+                        <p class="text-gray-300">Seamlessly co-create with peers and industry leaders. Ignite suggests partnership opportunities and assists in joint content creation and co-marketing campaigns.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>Connects users for joint projects.</li>
+                            <li>Suggests partnership opportunities.</li>
+                            <li>Assists with co-marketing and co-branding.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Advanced Analytics and Predictive Performance Insights -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-chart-line text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">Predictive Performance Insights</h3>
+                        <p class="text-gray-300">Move beyond basic metrics. Get forecasts on content performance, optimal posting times, and what topics will resonate most based on your niche and audience behavior.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>Forecasts content performance.</li>
+                            <li>Suggests optimal posting times and topics.</li>
+                            <li>Analyzes trends and audience behavior.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Multi-Language and Cultural Adaptation Features -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-globe text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">Multi-Language & Cultural Adaptation</h3>
+                        <p class="text-gray-300">Expand your global reach. Ensure your content is not just translated, but culturally appropriate and optimized for diverse linguistic audiences.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>AI-powered translation with cultural sentiment.</li>
+                            <li>Optimizes content for different languages.</li>
+                            <li>Ensures cultural relevance for global audiences.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Brand Storytelling Engine – Personal Narrative Development -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-book-open text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">Brand Storytelling Engine</h3>
+                        <p class="text-gray-300">Develop a cohesive personal narrative. Our engine helps you craft a long-term story arc, ensuring your content builds a compelling journey for your audience.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>Helps develop long-term brand narrative.</li>
+                            <li>Suggests content based on past posts.</li>
+                            <li>Ensures cohesive and evolving story.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Virtual Mentorship/Coaching Feature -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-graduation-cap text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">Virtual Mentorship & Coaching</h3>
+                        <p class="text-gray-300">Access scalable, affordable guidance. Receive AI-powered feedback, actionable advice, and participate in gamified brand-building challenges and expert webinars.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>AI-powered feedback on progress.</li>
+                            <li>Actionable advice based on data.</li>
+                            <li>Gamified challenges and expert webinars.</li>
+                        </ul>
+                    </div>
+
+                    <!-- AI-Powered Virtual Events & Webinars -->
+                    <div class="bg-gray-800 rounded-xl shadow-lg p-8 text-left">
+                        <i class="fas fa-calendar-alt text-purple-600 text-4xl mb-4"></i>
+                        <h3 class="text-2xl font-bold text-white mb-3">AI-Powered Virtual Events</h3>
+                        <p class="text-gray-300">Host impactful online events effortlessly. Ignite provides tools for promotion, content curation, and audience engagement strategies for webinars and workshops.</p>
+                        <ul class="list-disc list-inside text-gray-300 mt-4 space-y-2">
+                            <li>Tools for event promotion and content.</li>
+                            <li>AI curates topics and timing.</li>
+                            <li>Suggests guest speakers and co-hosts.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 6: About Us -->
+        <section id="about-us" class="page-section">
+            <div class="py-16">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+                    <div class="lg:w-1/2 flex justify-center lg:justify-start">
+                        <img src="https://placehold.co/400x400/8b5cf6/ffffff?text=Yasir+Kamran" alt="Yasir Kamir" class="rounded-full w-80 h-80 object-cover shadow-2xl transform hover:scale-105 transition duration-500 ease-in-out">
+                    </div>
+                    <div class="lg:w-1/2 text-center lg:text-left">
+                        <h1 class="text-5xl font-extrabold leading-tight text-white mb-6">We're on a Mission to End Creator Burnout.</h1>
+                        <p class="text-xl text-gray-300 mb-8">Ignite was born from a simple observation: the world is full of brilliant people who are invisible.</p>
+                    </div>
+                </div>
+
+                <!-- Founder's Story -->
+                <div class="py-16 mt-16 bg-gray-800 rounded-xl shadow-lg p-8">
+                    <h2 class="text-3xl font-bold text-white mb-6">My name is Yasir Kamran...</h2>
+                    <p class="text-lg text-gray-300 mb-4">...and for years, I watched incredible colleagues, friends, and entrepreneurs struggle with the same paradox. They were experts in their fields—engineers who could build marvels, marketers who could grow companies, leaders who could inspire teams—but when it came to building their own personal brand, they were paralyzed.</p>
+                    <p class="text-lg text-gray-300 mb-4">They knew they should be sharing their knowledge, but they were held back by a silent trio of fears: the fear of the blank page, the fear of sounding inauthentic, and the fear of shouting into the void.</p>
+                    <p class="text-lg text-gray-300 mb-4">They were trying to compete in the creator economy with a fragmented toolkit and a drained battery. They had the desire, but not the system. The expertise, but not the execution.</p>
+                    <p class="text-lg text-gray-300 mb-4 font-semibold">I knew there had to be a better way.</p>
+                    <p class="text-lg text-gray-300 mb-4">What if we could build a tool that acted less like a content machine and more like a trusted strategic partner? A platform that didn't just generate words, but amplified an individual's true voice?</p>
+                    <p class="text-lg text-gray-300 mb-4 font-bold text-purple-400">That's why I founded Ignite.</p>
+                    <p class="text-lg text-gray-300 mb-4">Our purpose isn't to replace human creativity, but to unleash it. We're here to eliminate the friction—the doubt, the busywork, the inconsistency—that stands between you and the impact you're meant to make. We believe that building your personal brand should feel as natural and effortless as having a conversation.</p>
+                    <p class="text-lg text-gray-300 mb-8">We're here to give you the courage to start and the system to be undeniable.</p>
+                    <p class="text-xl font-bold text-purple-300">— Yasir Kamran, Founder of Ignite</p>
+                </div>
+
+                <!-- Our Values Section -->
+                <div class="py-16 mt-16 bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+                    <h2 class="text-4xl font-bold text-white mb-12">Our Values</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-user-check text-purple-600 text-5xl mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">Authenticity First</h3>
+                            <p class="text-gray-300">Your voice is your greatest asset. We protect it fiercely.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-mountain text-purple-600 text-5xl mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">Courage Over Comfort</h3>
+                            <p class="text-gray-300">We exist to help you take the leap.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-calendar-check text-purple-600 text-5xl mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">Consistency is Kindness (to yourself)</h3>
+                            <p class="text-gray-300">We build systems to make showing up easy.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-users text-purple-600 text-5xl mb-4"></i>
+                            <h3 class="text-xl font-semibold text-white mb-2">Community-Powered</h3>
+                            <p class="text-gray-300">We're building a space for creators to support and grow with each other.</p>
+                        </div>
+                    </div>
+                    <button class="bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition duration-300 font-semibold shadow-lg">Join the Ignite Community</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 px-6 mt-16">
+        <div class="container mx-auto text-center">
+            <div class="text-2xl font-bold text-purple-300 mb-4">Ignite</div>
+            <p class="text-gray-400 mb-4">&copy; 2025 Ignite. All rights reserved.</p>
+            <div class="flex justify-center space-x-6 text-gray-400">
+                <a href="#" class="hover:text-white transition duration-300">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition duration-300">Terms of Service</a>
+                <a href="#" class="hover:text-white transition duration-300">Contact Us</a>
+            </div>
+            <div id="userIdDisplay" class="text-xs text-gray-400 mt-4"></div>
+        </div>
+    </footer>
+</body>
+</html>
